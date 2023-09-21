@@ -6,12 +6,27 @@
 //
 
 import Foundation
+import FirebaseFirestore
 
 //ViewModel for list of items view
 //Primary Tab
 class ToDoListViewViewModel: ObservableObject {
     @Published var showingNewItemView = false
-    init() {
+    
+    private let userId: String
+    init(userId: String) {
+        self.userId = userId
+    }
+//    Delete to do list
+    /// Parameter id: item id to delete
+    func delete(id: String){
+        let db = Firestore.firestore()
         
+        db.collection("users")
+//        2:12
+            .document(userId)
+            .collection("todos")
+            .document(id)
+            .delete()
     }
 }
