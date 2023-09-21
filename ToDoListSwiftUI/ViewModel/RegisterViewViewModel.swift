@@ -7,10 +7,13 @@
 
 import Foundation
 import FirebaseAuth
+import FirebaseFirestore
+
 class RegisterViewViewModel: ObservableObject {
     @Published var name = ""
     @Published var email = ""
     @Published var password = ""
+    @Published var errorMessage = ""
     
     init() {}
     
@@ -31,17 +34,26 @@ class RegisterViewViewModel: ObservableObject {
     }
     
     private func insertUserRecord(id: String) {
-        
+//        creating the user
+        let newUser = User(id: id, name: name, email: email, joined: Date().timeIntervalSince1970)
+//        Inserting to database
+        let db = Firestore.firestore()
+        db.collection("users")
+            .document(id)
+            .setData(newUser.asDictionary())
     }
     
     private func validate() -> Bool {
+        errorMessage = ""
         guard !name.trimmingCharacters(in: .whitespaces).isEmpty,
               !email.trimmingCharacters(in: .whitespaces).isEmpty,
               !password.trimmingCharacters(in: .whitespaces).isEmpty else {
+            errorMessage = "Please fill in all field"
             return false
         }
         
         guard email.contains("@") && email.contains(".") else {
+            errorMessage = "Please enter valid email"
             return false
         }
         
